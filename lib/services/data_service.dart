@@ -6,7 +6,8 @@ import '../models/medication.dart';
 import '../models/nurse.dart';
 import '../models/patient.dart';
 import '../models/prescription.dart';
-
+import '../models/specialty.dart';
+import '../models/medication_presentation.dart';
 class DataService extends ChangeNotifier {
   List<Patient> _patients = [];
   List<Doctor> _doctors = [];
@@ -15,6 +16,33 @@ class DataService extends ChangeNotifier {
   List<Consultation> _consultations = [];
   List<Prescription> _prescriptions = [];
   List<Medication> _medications = [];
+  List<Specialty> _specialties = [];
+  List<MedicationPresentation> _presentations = [];
+
+  DataService() {
+    _addInitialDoctors();
+  }
+
+  void _addInitialDoctors() {
+    _doctors = [
+      Doctor(
+        name: "Dr. João",
+        crm: "12345",
+        specialty: "Cardiologia",
+        photo: "assets/images/doctor1.jpg",
+        email: "doctor1@example.com",
+        createdAt: DateTime.now(),
+      ),
+      Doctor(
+        name: "Dr. Maria",
+        crm: "67890",
+        specialty: "Dermatologia",
+        photo: "assets/images/doctor2.jpg",
+        email: "doctor2@example.com",
+        createdAt: DateTime.now(),
+      ),
+    ];
+  }
 
   // Patient CRUD operations
   void addPatient(Patient patient) {
@@ -131,6 +159,14 @@ class DataService extends ChangeNotifier {
     return _consultations;
   }
 
+  List<Consultation> getConsultationsForDoctor(String doctor) {
+    return _consultations.where((consultation) => consultation.doctor == doctor).toList();
+  }
+
+  List<Consultation> getConsultationsForPatient(String patient) {
+    return _consultations.where((consultation) => consultation.patient == patient).toList();
+  }
+
   // Prescription CRUD operations
   void addPrescription(Prescription prescription) {
     _prescriptions.add(prescription);
@@ -154,6 +190,14 @@ class DataService extends ChangeNotifier {
     return _prescriptions;
   }
 
+  List<Prescription> getPrescriptionsForDoctor(String doctor) {
+    return _prescriptions.where((prescription) => _consultations.any((consultation) => consultation.date.toString() == prescription.consultation && consultation.doctor == doctor)).toList();
+  }
+
+  List<Prescription> getPrescriptionsForPatient(String patient) {
+    return _prescriptions.where((prescription) => _consultations.any((consultation) => consultation.date.toString() == prescription.consultation && consultation.patient == patient)).toList();
+  }
+
   // Medication CRUD operations
   void addMedication(Medication medication) {
     _medications.add(medication);
@@ -175,5 +219,25 @@ class DataService extends ChangeNotifier {
 
   List<Medication> getMedications() {
     return _medications;
+  }
+
+  // Specialty CRUD operations
+  void addSpecialty(Specialty specialty) {
+    _specialties.add(specialty);
+    notifyListeners();
+  }
+
+  List<Specialty> getSpecialties() {
+    return _specialties;
+  }
+
+  // Medication Presentation CRUD operations
+  void addPresentation(MedicationPresentation presentation) {
+    _presentations.add(presentation);
+    notifyListeners();
+  }
+
+  List<MedicationPresentation> getPresentations() {
+    return _presentations;
   }
 }

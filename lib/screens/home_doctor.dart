@@ -1,62 +1,85 @@
+import 'package:caminho_de_casa/screens/view_consultations_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import '../services/auth_service.dart';
+import 'package:caminho_de_casa/screens/doctor_schedule_screen.dart';
+import 'package:caminho_de_casa/screens/doctor_patients_screen.dart';
+import 'package:caminho_de_casa/screens/doctor_prescriptions_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeDoctor extends StatefulWidget {
+  @override
+  _HomeDoctorState createState() => _HomeDoctorState();
+}
+
+class _HomeDoctorState extends State<HomeDoctor> {
+  int _selectedIndex = 0;
+
+  static List<Widget> _widgetOptions = <Widget>[
+    HomeDoctorPage(),
+    ViewConsultationsScreen(),
+    DoctorScheduleScreen(),
+    DoctorPatientsScreen(),
+    DoctorPrescriptionsScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Médicos CZ'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthService>().logout();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              _buildMenuGrid(context),
-              SizedBox(height: 20),
-              _buildHealthTipsSection(),
-            ],
-          ),
-        ),
-      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Histórico',
+            icon: Icon(Icons.list_alt),
+            label: 'Consultas',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Agenda',
+            icon: Icon(Icons.access_time),
+            label: 'Horários',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_search),
+            label: 'Pacientes',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.medical_services),
-            label: 'Medicamentos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_hospital),
-            label: 'Tratamentos',
+            label: 'Prescrições',
           ),
         ],
+        currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
         showUnselectedLabels: true,
+      ),
+    );
+  }
+}
+
+class HomeDoctorPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            _buildMenuGrid(context),
+            SizedBox(height: 20),
+            _buildHealthTipsSection(),
+          ],
+        ),
       ),
     );
   }
@@ -68,12 +91,10 @@ class HomeScreen extends StatelessWidget {
       crossAxisSpacing: 16.0,
       mainAxisSpacing: 16.0,
       children: <Widget>[
-        _buildMenuItem(context, FontAwesomeIcons.notesMedical, 'Prescrição Médica', '/prescription'),
-        _buildMenuItem(context, FontAwesomeIcons.syringe, 'Controle de Vacinação', '/vaccination'),
-        _buildMenuItem(context, FontAwesomeIcons.vial, 'Conexão Laboratório', '/laboratory'),
-        _buildMenuItem(context, FontAwesomeIcons.heartbeat, 'Dicas de Saúde', '/healthtips'),
-        _buildMenuItem(context, FontAwesomeIcons.userCheck, 'Usuário Autorizado', '/authorizeduser'),
-        _buildMenuItem(context, FontAwesomeIcons.clipboardCheck, 'Avaliações', '/evaluations'),
+        _buildMenuItem(context, FontAwesomeIcons.stethoscope, 'Consultas', '/view_consultations'),
+        _buildMenuItem(context, FontAwesomeIcons.calendarAlt, 'Horários', '/doctor_schedule'),
+        _buildMenuItem(context, FontAwesomeIcons.userMd, 'Pacientes', '/doctor_patients'),
+        _buildMenuItem(context, FontAwesomeIcons.notesMedical, 'Prescrições', '/doctor_prescriptions'),
       ],
     );
   }

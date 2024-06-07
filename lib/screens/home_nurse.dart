@@ -1,62 +1,73 @@
+import 'package:caminho_de_casa/screens/nurse_consultations_screen.dart';
+import 'package:caminho_de_casa/screens/nurse_medications_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import '../services/auth_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeNurse extends StatefulWidget {
+  @override
+  _HomeNurseState createState() => _HomeNurseState();
+}
+
+class _HomeNurseState extends State<HomeNurse> {
+  int _selectedIndex = 0;
+
+  static List<Widget> _widgetOptions = <Widget>[
+    HomeNursePage(),
+    NurseConsultationsScreen(),
+    NurseMedicationsScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Médicos CZ'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthService>().logout();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              _buildMenuGrid(context),
-              SizedBox(height: 20),
-              _buildHealthTipsSection(),
-            ],
-          ),
-        ),
-      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Histórico',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Agenda',
+            icon: Icon(Icons.list_alt),
+            label: 'Consultas',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.medical_services),
             label: 'Medicamentos',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_hospital),
-            label: 'Tratamentos',
-          ),
         ],
+        currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
         showUnselectedLabels: true,
+      ),
+    );
+  }
+}
+
+class HomeNursePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            _buildMenuGrid(context),
+            SizedBox(height: 20),
+            _buildHealthTipsSection(),
+          ],
+        ),
       ),
     );
   }
@@ -68,12 +79,8 @@ class HomeScreen extends StatelessWidget {
       crossAxisSpacing: 16.0,
       mainAxisSpacing: 16.0,
       children: <Widget>[
-        _buildMenuItem(context, FontAwesomeIcons.notesMedical, 'Prescrição Médica', '/prescription'),
-        _buildMenuItem(context, FontAwesomeIcons.syringe, 'Controle de Vacinação', '/vaccination'),
-        _buildMenuItem(context, FontAwesomeIcons.vial, 'Conexão Laboratório', '/laboratory'),
-        _buildMenuItem(context, FontAwesomeIcons.heartbeat, 'Dicas de Saúde', '/healthtips'),
-        _buildMenuItem(context, FontAwesomeIcons.userCheck, 'Usuário Autorizado', '/authorizeduser'),
-        _buildMenuItem(context, FontAwesomeIcons.clipboardCheck, 'Avaliações', '/evaluations'),
+        _buildMenuItem(context, FontAwesomeIcons.stethoscope, 'Consultas', '/nurse_consultations'),
+        _buildMenuItem(context, FontAwesomeIcons.pills, 'Medicamentos', '/nurse_medications'),
       ],
     );
   }

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../services/auth_service.dart';
 import '../utils/validators.dart';
-import '../models/user.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/background_animation.dart';
+import '../models/user.dart';
 
-class LoginScreen extends StatelessWidget {
+class RegistrationScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   UserType? selectedUserType;
 
   @override
@@ -22,7 +21,7 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Login',
+                'Registro',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -35,6 +34,12 @@ class LoginScreen extends StatelessWidget {
               CustomTextField(
                 controller: passwordController,
                 labelText: 'Senha',
+                obscureText: true,
+              ),
+              SizedBox(height: 10),
+              CustomTextField(
+                controller: confirmPasswordController,
+                labelText: 'Confirmar Senha',
                 obscureText: true,
               ),
               SizedBox(height: 10),
@@ -53,38 +58,38 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               CustomButton(
-                onPressed: () async {
+                onPressed: () {
                   if (!isValidEmail(emailController.text)) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Email inválido')),
                     );
                     return;
                   }
-
-                  if (selectedUserType == null) {
+                  if (passwordController.text != confirmPasswordController.text) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Selecione um tipo de usuário')),
+                      SnackBar(content: Text('Senhas não coincidem')),
                     );
                     return;
                   }
 
-                  try {
-                    await context.read<AuthService>().login(emailController.text, passwordController.text, selectedUserType!);
-                    Navigator.pushNamed(context, '/home');
-                  } catch (e) {
+                  if (selectedUserType == null || selectedUserType != UserType.patient) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Falha na autenticação')),
+                      SnackBar(content: Text('Somente pacientes podem se registrar')),
                     );
+                    return;
                   }
+
+                  // Registro do usuário (simulado)
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
-                text: 'Login',
+                text: 'Registrar',
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/registration');
+                  Navigator.pushNamed(context, '/login');
                 },
                 child: Text(
-                  'Não tem uma conta? Registre-se',
+                  'Já tem uma conta? Faça login',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

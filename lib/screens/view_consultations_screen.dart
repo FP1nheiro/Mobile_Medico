@@ -1,34 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/data_service.dart';
+import '../models/consultation.dart';
+import '../services/auth_service.dart';
 
-class ConsultationScreen extends StatelessWidget {
+class ViewConsultationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final consultations = context.watch<DataService>().getConsultations();
+    final currentUser = context.watch<AuthService>().user;
+    final consultations = context.watch<DataService>().getConsultationsForDoctor(currentUser!.name);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Minhas Consultas'),
+        title: Text('Consultas Agendadas'),
       ),
       body: ListView.builder(
         itemCount: consultations.length,
         itemBuilder: (context, index) {
           final consultation = consultations[index];
           return ListTile(
-            title: Text('Consulta com Dr(a). ${consultation.doctor}'),
+            title: Text('Paciente: ${consultation.patient}'),
             subtitle: Text('Data: ${consultation.date.toLocal()} - Hora: ${consultation.time}'),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
+            trailing: ElevatedButton(
               onPressed: () {
-                // Lógica para deletar a consulta
-                context.read<DataService>().deleteConsultation(
-                      consultation.doctor,
-                      consultation.date,
-                      consultation.time,
-                      consultation.patient,
-                    );
+                Navigator.pushNamed(context, '/prescribe_medication', arguments: consultation);
               },
+              child: Text('Atender'),
             ),
           );
         },

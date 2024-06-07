@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AppointmentScreen extends StatelessWidget {
+class PrescriptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agenda de Consultas'),
+        title: Text('Prescrições'),
       ),
       body: Center(
-        child: Text('Agenda de Consultas'),
+        child: Text('Lista de Prescrições'),
       ),
     );
   }
